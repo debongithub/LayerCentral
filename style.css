@@ -1,0 +1,97 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+h1 {
+  background-color: #4CAF50;
+  color: white;
+  margin: 0;
+  padding: 10px;
+}
+
+form {
+  margin: 10px;
+}
+
+label {
+  display: inline-block;
+  width: 150px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-right: 10px;
+  width: 300px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #3e8e41;
+}
+
+/* Set font and background color for the table header */
+.tabulator-header {
+  background-color: #F1F1F1;
+  color: #3B3B3B;
+  font-weight: bold;
+  border: none;
+  text-transform: uppercase;
+  padding: 10px 15px;
+}
+
+/* Set font and background color for even table rows */
+.tabulator-row:nth-child(even) {
+  background-color: #F6F6F6;
+}
+
+/* Set font and background color for odd table rows */
+.tabulator-row:nth-child(odd) {
+  background-color: #FFFFFF;
+}
+
+/* Set font and background color for selected rows */
+.tabulator-row.tabulator-selected {
+  background-color: #E6E6E6;
+}
+
+/* Set font and background color for column header on hover */
+.tabulator-header:hover {
+  background-color: #D8D8D8;
+}
+
+/* Set font and background color for pagination buttons */
+.tabulator-page {
+  background-color: #F1F1F1;
+  color: #3B3B3B;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+/* Set font and background color for current page */
+.tabulator-page.tabulator-active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* Set font and background color for disabled pagination buttons */
+.tabulator-page.tabulator-disabled {
+  color: #ccc;
+  border-color: #ccc;
+  cursor: default;
+}
