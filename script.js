@@ -67,6 +67,7 @@ form.addEventListener('submit', function (event) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+            action_type: "search",
             layerArn: layerArn
         })
     })
