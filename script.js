@@ -67,7 +67,7 @@ form.addEventListener('submit', function (event) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            old_layer_arn: layerArn
+            layerArn: layerArn
         })
     })
         .then(response => response.json())
