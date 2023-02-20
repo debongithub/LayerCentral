@@ -20,7 +20,8 @@ rotateButton.addEventListener("click", function(event) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        NewLayerArn: latest_layer_label.textContent
+        action_type: "rotate",
+        layerArn: latest_layer_label.textContent
       })
     })
     .then(response => {
@@ -50,7 +51,8 @@ form.addEventListener('submit', function (event) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            old_layer_arn: layerArn
+            action_type: "search",
+            layerArn: layerArn
         })
     })
     .then(response => response.json())
@@ -111,8 +113,3 @@ form.addEventListener('submit', function (event) {
         })
         .catch(error => console.error(error));
 });
-
-
-
-
-
