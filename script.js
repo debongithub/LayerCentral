@@ -4,6 +4,7 @@ const latestLayerFetch = 'https://1fckq8m6nf.execute-api.us-east-1.amazonaws.com
 const rotateLayer = 'https://1fckq8m6nf.execute-api.us-east-1.amazonaws.com/dev/rotatelayers';
 
 // Get a reference to the form and the input element
+//Adding a new comment
 const form = document.querySelector('form');
 const input = document.getElementById('layer-arn-input');
 const latest_layer_label = document.getElementById('latest-layer');
