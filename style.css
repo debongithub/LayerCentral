@@ -8,6 +8,8 @@ html, body {
 }
 
 header {
+  display: flex;
+  align-items: center;
   background-color: #FF9900;;
   color: #fff;
   text-align: center;
@@ -15,9 +17,14 @@ header {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+header h1 {
   margin: 0;
   font-size: 28px;
+  margin-left: 10px;
+}
+
+header img {
+  height: 60px;
 }
 
 .container {
