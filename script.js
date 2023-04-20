@@ -1,117 +1,67 @@
-// Define the URL for the API endpoint
-const apiUrl = 'https://1fckq8m6nf.execute-api.us-east-1.amazonaws.com/dev/LambdaConfigReporter';
-const latestLayerFetch = 'https://1fckq8m6nf.execute-api.us-east-1.amazonaws.com/dev/latestlayerfetch';
-const rotateLayer = 'https://1fckq8m6nf.execute-api.us-east-1.amazonaws.com/dev/rotatelayers';
-
-// Get a reference to the form and the input element
-//Adding a new comment
-const form = document.querySelector('form');
-const input = document.getElementById('layer-arn-input');
-const latest_layer_label = document.getElementById('latest-layer');
-const rotateButton = document.getElementById("rotate-button");
-
-
-rotateButton.addEventListener("click", function(event) {
-    event.preventDefault(); // prevent the default form submission behavior
-    const layerArn = input.value;
-    // make a fetch call to your API endpoint
-    fetch(rotateLayer, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action_type: "rotate",
-        layerArn: latest_layer_label.textContent
-      })
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-        alert(`Rotate Layers Response: ${data}`);
-    })
-    .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-    });
+document.addEventListener("DOMContentLoaded", function() {
+	// Get references to the relevant elements
+	const layerValuesSelect = document.querySelector("#layer-values-dropdown");
+	const layerVersionSelect = document.querySelector("#layer-version-dropdown");
+	const submitBtn = document.querySelector("button[type='submit']");
+	const refereshBtn = document.querySelector("button[type='submit']");
+	const comingSoonLabel = document.querySelector("#coming-soon-label");
+  
+	// Hide the second dropdown, third dropdown, and submit button by default
+	layerValuesSelect.style.display = "none";
+	layerVersionSelect.style.display = "none";
+	submitBtn.style.display = "none";
+  
+	// Add an event listener to the first dropdown
+	const configTypeSelect = document.querySelector("#config-type");
+	configTypeSelect.addEventListener("change", async function() {
+	  if (configTypeSelect.value === "Layers") {
+		// If "Layers" is selected, show the second dropdown and hide the "coming soon" label
+		layerValuesSelect.style.display = "block";
+		layerVersionSelect.style.display = "block";
+		comingSoonLabel.style.display = "none";
+		submitBtn.style.display = "block";
+  
+		// Call the API to get the layer data
+		const apiUrl = "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/getlayersdata";
+		const layerData = await fetch(apiUrl).then(response => response.json());
+  
+		// Create an object to store the layer versions by name
+		const layerVersions = {};
+		for (const layer of layerData.Layers) {
+		  layerVersions[layer.LayerName] = layer.LatestMatchingVersion.Version;
+		}
+  
+		// Populate the layer values dropdown with the layer names
+		layerValuesSelect.innerHTML = "";
+		const layerNames = Object.keys(layerVersions);
+		layerNames.unshift("Select Layer"); // Add a "Select Layer" option as the first element in the array
+		for (const layerName of layerNames) {
+		const option = document.createElement("option");
+		option.value = layerName;
+		option.text = layerName;
+		layerValuesSelect.appendChild(option);
+		}
+  
+		// Add an event listener to the layer values dropdown
+		layerValuesSelect.addEventListener("change", function() {
+		  // Get the selected layer name
+		  const selectedLayerName = this.value;
+  
+		  // Get the latest version for the selected layer name and populate the layer version dropdown
+		  layerVersionSelect.innerHTML = "";
+		  const latestVersion = layerVersions[selectedLayerName];
+		  const option = document.createElement("option");
+		  option.value = latestVersion;
+		  option.text = latestVersion;
+		  layerVersionSelect.appendChild(option);
+		});
+	  } else {
+		// Otherwise, hide the second dropdown, third dropdown, submit button, and "coming soon" label
+		layerValuesSelect.style.display = "none";
+		layerVersionSelect.style.display = "none";
+		submitBtn.style.display = "none";
+		comingSoonLabel.style.display = "block";
+	  }
+	});
   });
   
-// Add an event listener to the form's submit button
-form.addEventListener('submit', function (event) {
-    // Prevent the default form submission behavior
-    const layerArn = input.value;
-    event.preventDefault();
-    // Get the layer ARN from the input element
-    // Make a POST request to the API endpoint with the layer ARN in the body
-    fetch(latestLayerFetch, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            action_type: "search",
-            layerArn: layerArn
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        latest_layer_label.textContent =  data.LatestArn;
-    });
-
-    // Make a POST request to the API endpoint with the layer ARN in the body
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            action_type: "search",
-            layerArn: layerArn
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            // Get a reference to the table element
-            const table = document.getElementById('my-table');
-
-            // Define the table columns and their headers
-            const tableColumns = [
-                { title: 'Account Number', field: 'AccountNumber', sorter: "string", headerSort: false },
-                { title: 'Function Name', field: 'FunctionName', sorter: "string", headerSort: false },
-                { title: 'Version', field: 'Version', sorter: "string", headerSort: false },
-                { title: 'ARN', field: 'Arn', sorter: "string", headerSort: false }
-            ];
-
-            // Initialize the Tabulator table with the columns and options
-            const tabulatorTable = new Tabulator(table, {
-                rowFormatter: function (row) {
-                    if (row.getData().col == "blue") {
-                        row.getElement().style.backgroundColor = "#1e3b20";
-                    }
-                },
-                pagination: 'local',
-                paginationSize: 20,
-                layout: 'fitColumns',
-                columns: tableColumns
-            });
-
-            tabulatorTable.on("tableBuilt", function () {
-                tabulatorTable.setData(data);
-
-                // Set the table to the first page
-                tabulatorTable.setPage(1);
-            });
-
-            //Export to CSV :
-
-            document.getElementById("export-btn").addEventListener("click", function () {
-                // trigger the CSV download
-                tabulatorTable.download("csv", "table-data.csv");
-            });
-
-        })
-        .catch(error => console.error(error));
-});
