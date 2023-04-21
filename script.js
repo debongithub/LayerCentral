@@ -1,3 +1,56 @@
+// define a function to handle the layer push request
+function pushLayer(inputValue, idToken) {
+  // create the JSON body with the input value
+  const body = {
+    input: inputValue,
+  };
+
+  // send a request to the API endpoint using the Fetch API
+  fetch(
+    "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/oneclicklayerpush",
+    {
+      method: "POST",
+      headers: {
+        Authorization: idToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      console.log("Layer pushed successfully");
+    })
+    .catch((error) => {
+      console.error("There was a problem pushing the layer:", error);
+    });
+}
+
+// define a function to handle the API request
+function refreshData(idToken) {
+  // send a request to the API endpoint using the Fetch API
+  fetch(
+    "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/ondemanddatarefresh",
+    {
+      method: "POST",
+      headers: {
+        Authorization: idToken,
+      },
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      console.log("Data refreshed successfully");
+    })
+    .catch((error) => {
+      console.error("There was a problem refreshing the data:", error);
+    });
+}
+
 function validateIdToken(idToken) {
   const parseJwt = (idToken) => {
     try {
@@ -8,7 +61,6 @@ function validateIdToken(idToken) {
       return null;
     }
   };
-
   return parseJwt(idToken);
 }
 
@@ -40,6 +92,12 @@ document.addEventListener("DOMContentLoaded", function () {
     layerValuesSelect.style.display = "none";
     layerVersionSelect.style.display = "none";
     submitBtn.style.display = "none";
+
+    //Updating refresh Button :
+
+    refereshBtn.addEventListener("click", function (event) {
+      refreshData(idToken);
+    });
 
     // Add an event listener to the first dropdown
     const configTypeSelect = document.querySelector("#config-type");
@@ -88,6 +146,26 @@ document.addEventListener("DOMContentLoaded", function () {
           option.text = latestVersion;
           layerVersionSelect.appendChild(option);
         });
+
+        // add a submit event listener to the form that calls the pushLayer function
+        document
+          .querySelector("form")
+          .addEventListener("submit", function (event) {
+            // prevent the default behavior of the form
+            event.preventDefault();
+
+            // get the selected values from the dropdowns
+            const layerValue = document.getElementById(
+              "layer-values-dropdown"
+            ).value;
+            const layerVersion = document.getElementById(
+              "layer-version-dropdown"
+            ).value;
+            // concatenate the layer value and version with a : delimiter
+            const inputValue = `${layerValue}:${layerVersion}`;
+
+            pushLayer(inputValue, idToken);
+          });
       } else {
         // Otherwise, hide the second dropdown, third dropdown, submit button, and "coming soon" label
         layerValuesSelect.style.display = "none";
