@@ -1,40 +1,81 @@
 
-// Validate and get claims
 function validateIdToken(idToken) {
+  console.log("Validating ID Token...");
+  
+  // Initialize Cognito userpool client
+  const poolData = {
+    UserPoolId: "us-east-1_KbsERc55E",
+    ClientId: "29uilsdqn86ki39ti4fhjqfdvm",
+  };
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+  // Decode the ID token
+  const payload = jwtDecode(idToken);
+  console.log("Decoded JWT payload:", payload);
+
+  // Check if the token has expired
+  const now = Date.now() / 1000;
+  if (payload.exp < now) {
+    console.log("ID token has expired");
+    return Promise.reject("ID token has expired");
+  }
+
+  // Get the user data from Cognito user pool
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+    Username: payload.username,
+    Pool: userPool,
+  });
+  console.log("Cognito user:", cognitoUser);
+
   return new Promise((resolve, reject) => {
-    
-    // Initialize Cognito userpool client
-    const poolData = {
-      UserPoolId: "us-east-1_KbsERc55E",
-      ClientId: "29uilsdqn86ki39ti4fhjqfdvm",
-    };
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
-    var cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
-      apiVersion: "2016-04-18",
-      region: "us-east-1", // Update the region to match your Cognito user pool region
+    // Verify the signature of the ID token
+    const jwksClient = jwksRsa({
+      jwksUri: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_KbsERc55E/.well-known/jwks.json`,
     });
-
-    const cognitoUser = userPool.getCurrentUser();
-    if (cognitoUser != null) {
-      cognitoUser.getSession((err, session) => {
+    function getKey(header, callback) {
+      jwksClient.getSigningKey(header.kid, (err, key) => {
         if (err) {
-          reject(err);
+          console.log("Error getting signing key:", err);
+          callback(err);
         } else {
-          const jwt = session.getIdToken().getJwtToken();
-          if (jwt === idToken) {
-            const payload = jwtDecode(idToken);
-            resolve(payload);
-          } else {
-            reject("Invalid token");
-          }
+          console.log("Signing key:", key.publicKey || key.rsaPublicKey);
+          callback(null, key.publicKey || key.rsaPublicKey);
         }
       });
-    } else {
-      reject("No user found");
     }
+
+    jwt.verify(
+      idToken,
+      getKey,
+      {
+        audience: "29uilsdqn86ki39ti4fhjqfdvm",
+        issuer: `https://cognito-idp.us-east-1.amazonaws.com/us-east-1_KbsERc55E`,
+        algorithms: ["RS256"],
+      },
+      (err, decoded) => {
+        if (err) {
+          console.log("Error verifying ID token:", err);
+          reject(err);
+        } else {
+          console.log("Decoded ID token:", decoded);
+
+          // Check if the user is valid
+          if (decoded.token_use !== "id") {
+            console.log("Invalid token_use");
+            reject("Invalid token_use");
+          } else if (decoded.client_id !== "29uilsdqn86ki39ti4fhjqfdvm") {
+            console.log("Invalid client_id");
+            reject("Invalid client_id");
+          } else {
+            console.log("ID token is valid");
+            resolve(decoded);
+          }
+        }
+      }
+    );
   });
 }
+
 
 document.addEventListener("DOMContentLoaded", function () {
   // Get references to the relevant elements
