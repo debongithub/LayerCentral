@@ -45,7 +45,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const comingSoonLabel = document.querySelector("#coming-soon-label");
 
   const urlParams = new URLSearchParams(window.location.search);
+  console.log(urlParams)
   const idToken = urlParams.get("id_token");
+    console.log(idToken)
   if (idToken) {
     try {
       const claims = validateIdToken(idToken);
