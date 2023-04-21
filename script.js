@@ -1,18 +1,20 @@
-// Initialize Cognito userpool client
-const poolData = {
-  UserPoolId: "us-east-1_KbsERc55E",
-  ClientId: "29uilsdqn86ki39ti4fhjqfdvm",
-};
-const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
-var cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
-  apiVersion: "2016-04-18",
-  region: "us-east-1", // Update the region to match your Cognito user pool region
-});
 
 // Validate and get claims
 function validateIdToken(idToken) {
   return new Promise((resolve, reject) => {
+    
+    // Initialize Cognito userpool client
+    const poolData = {
+      UserPoolId: "us-east-1_KbsERc55E",
+      ClientId: "29uilsdqn86ki39ti4fhjqfdvm",
+    };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+    var cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
+      apiVersion: "2016-04-18",
+      region: "us-east-1", // Update the region to match your Cognito user pool region
+    });
+
     const cognitoUser = userPool.getCurrentUser();
     if (cognitoUser != null) {
       cognitoUser.getSession((err, session) => {
