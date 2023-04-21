@@ -44,12 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const refereshBtn = document.querySelector("button[type='submit']");
   const comingSoonLabel = document.querySelector("#coming-soon-label");
 
-  const urlParams = new URLSearchParams(window.location.search);
-  console.log(urlParams)
-  idTok = location.hash.split('&')[0].split('=')[1];
-  console.log(idTok)
-  const idToken = urlParams.get("id_token");
-    console.log(idToken)
+  const urlParams = window.location.hash.split("&");
+  const idTokenParam = urlParams.find(param => param.includes("id_token="));
+  const idToken = idTokenParam ? idTokenParam.split("=")[1] : null;
+  console.log(idToken)
   if (idToken) {
     try {
       const claims = validateIdToken(idToken);
