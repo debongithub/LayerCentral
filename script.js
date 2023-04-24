@@ -31,6 +31,8 @@ function pushLayer(inputValue, idToken) {
 // define a function to handle the API request
 function refreshData(idToken) {
   // send a request to the API endpoint using the Fetch API
+
+  console.log("Calling refresh api.")
   fetch(
     "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/ondemanddatarefresh",
     {
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const layerValuesSelect = document.querySelector("#layer-values-dropdown");
   const layerVersionSelect = document.querySelector("#layer-version-dropdown");
   const submitBtn = document.querySelector("button[type='submit']");
-  const refereshBtn = document.querySelector("button[type='submit']");
+  const refereshBtn = document.querySelector("#refresh");
   const comingSoonLabel = document.querySelector("#coming-soon-label");
 
   const urlParams = window.location.hash.split("&");
@@ -88,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   if (claims) {
+	console.log("Claims read.. Loading other componnents.")
     // Hide the second dropdown, third dropdown, and submit button by default
     layerValuesSelect.style.display = "none";
     layerVersionSelect.style.display = "none";
@@ -125,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Populate the layer values dropdown with the layer names
         layerValuesSelect.innerHTML = "";
         const layerNames = Object.keys(layerVersions);
-        layerNames.unshift("Select Layer"); // Add a "Select Layer" option as the first element in the array
+        layerNames.unshift("Select A Layer"); // Add a "Select Layer" option as the first element in the array
         for (const layerName of layerNames) {
           const option = document.createElement("option");
           option.value = layerName;
@@ -143,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const latestVersion = layerVersions[selectedLayerName];
           const option = document.createElement("option");
           option.value = latestVersion;
-          option.text = latestVersion;
+          option.text = latestVersion + ' - Latest Version';
           layerVersionSelect.appendChild(option);
         });
 
