@@ -15,23 +15,30 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
-<script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js/dist/amazon-cognito-identity.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js/dist/amazon-cognito-identity.min.js"></script>
   </head>
   <body>
     <header>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Amazon_Lambda_architecture_logo.svg/281px-Amazon_Lambda_architecture_logo.svg.png" alt="AWS Lambda" width="64" height="64">
-        <h1>AWS Lambda Fleet Control</h1>
-      </header>
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Amazon_Lambda_architecture_logo.svg/281px-Amazon_Lambda_architecture_logo.svg.png"
+        alt="AWS Lambda"
+        width="64"
+        height="64"
+      />
+      <h1>AWS Lambda Fleet Control</h1>
+    </header>
     <div class="container">
       <section id="form-section">
         <form>
           <div class="form-field">
             <select id="config-type" name="config-type" required>
-              <option value="">Select Configuration Type</option>
-              <option value="Layers">Layers</option>
-              <option value="VPC">VPC</option>
-              <option value="ReservedConcurrency">Reserved Concurrency</option>
+              <option value="">Select Configuration Type To Push</option>
+              <option value="Layers">AWS Lambda Layers for functions</option>
+              <option value="VPC">AWS VPC Setting for functions</option>
+              <option value="ReservedConcurrency">
+                Reserved Concurrency for functions
+              </option>
             </select>
           </div>
           <div id="layer-values" class="form-field">
@@ -40,10 +47,8 @@
               name="layer-values-dropdown"
               required
             >
-              <option value="">Select Layer</option>
+              <option value="">Select AWS Layer</option>
               <option value="layer-value-1">Layer Value 1</option>
-              <option value="layer-value-2">Layer Value 2</option>
-              <option value="layer-value-3">Layer Value 3</option>
             </select>
           </div>
           <div id="layer-version" class="form-field">
@@ -56,15 +61,23 @@
             </select>
           </div>
           <div class="btn-block">
-            <button type="submit" id="submit">Submit</button>
-            <br />
-            <hr />
-            <button type="submit" id="refresh">Refresh Data</button>
+            <button type="submit" id="submit">One Click Push : Latest Layer</button>
           </div>
-          <div id="coming-soon-label" style="display: none">
+          <div id="coming-soon-label" class="coming-soon" style="display: none">
             Feature Coming Soon
           </div>
+          
         </form>
+        <div class="btn-block2">
+          <br />
+          <hr />
+          <button type="submit" id="refresh">Refresh Dashboard Data</button>
+          <br />
+          <hr />
+          <button type="submit" id="refresh">How does this work?</button>
+          <br />
+          <hr />
+        </div>
       </section>
       <section id="dashboard-section">
         <iframe
