@@ -32,11 +32,11 @@ function pushLayer(inputValue, idToken) {
 function refreshData(idToken) {
   // send a request to the API endpoint using the Fetch API
 
-  console.log("Calling refresh api.")
+  console.log("Calling refresh api.");
   fetch(
     "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/ondemanddatarefresh",
     {
-      method: "POST",
+      method: "GET",
       headers: {
         Authorization: idToken,
       },
@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const layerVersionSelect = document.querySelector("#layer-version-dropdown");
   const submitBtn = document.querySelector("button[type='submit']");
   const refereshBtn = document.querySelector("#refresh");
+  const diagramBtn = document.querySelector("#diagram");
   const comingSoonLabel = document.querySelector("#coming-soon-label");
 
   const urlParams = window.location.hash.split("&");
@@ -90,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   if (claims) {
-	console.log("Claims read.. Loading other componnents.")
+    console.log("Claims read.. Loading other componnents.");
     // Hide the second dropdown, third dropdown, and submit button by default
     layerValuesSelect.style.display = "none";
     layerVersionSelect.style.display = "none";
@@ -101,6 +102,20 @@ document.addEventListener("DOMContentLoaded", function () {
     refereshBtn.addEventListener("click", function (event) {
       refreshData(idToken);
     });
+	var currentLink = "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
+	diagramBtn.addEventListener("click", function (event) {
+		console.log("Diagram button clicked...")
+		
+		var iframe = document.querySelector("#dashboard-section-frame");
+		console.log(currentLink)
+		if (currentLink === "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws") {
+			currentLink = "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/";
+		  } else {
+			currentLink = "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
+		  }
+		  console.log(currentLink)
+		  iframe.src = currentLink;
+	  });
 
     // Add an event listener to the first dropdown
     const configTypeSelect = document.querySelector("#config-type");
@@ -146,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const latestVersion = layerVersions[selectedLayerName];
           const option = document.createElement("option");
           option.value = latestVersion;
-          option.text = latestVersion + ' - Latest Version';
+          option.text = latestVersion + " - Latest Version";
           layerVersionSelect.appendChild(option);
         });
 
