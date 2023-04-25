@@ -168,3 +168,13 @@ iframe {
   border-style: solid;
   border-color: #FFA500 transparent transparent transparent;
 }
+
+.countdown {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
