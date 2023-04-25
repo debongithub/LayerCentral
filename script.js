@@ -1,3 +1,23 @@
+function startCountdown(countdownElement) {
+  let secondsRemaining = 30;
+
+  countdownElement.innerHTML = "Wait "+ secondsRemaining + "s";
+  countdownElement.style.display = "block";
+
+  let countdownInterval = setInterval(function () {
+    secondsRemaining--;
+    countdownElement.innerHTML = "Wait "+ secondsRemaining + "s";
+
+    if (secondsRemaining <= 0) {
+      clearInterval(countdownInterval);
+      countdownElement.style.display = "none";
+      location.reload();
+    }
+  }, 1000);
+}
+
+
+
 // define a function to handle the layer push request
 function pushLayer(inputValue, idToken) {
   // create the JSON body with the input value
@@ -74,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const refereshBtn = document.querySelector("#refresh");
   const diagramBtn = document.querySelector("#diagram");
   const comingSoonLabel = document.querySelector("#coming-soon-label");
+  const countdownElement = document.querySelector("#countdown");
 
   const urlParams = window.location.hash.split("&");
   const idTokenParam = urlParams.find((param) => param.includes("id_token="));
@@ -101,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     refereshBtn.addEventListener("click", function (event) {
       refreshData(idToken);
+      startCountdown(countdownElement);
     });
 	var currentLink = "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
 	diagramBtn.addEventListener("click", function (event) {
