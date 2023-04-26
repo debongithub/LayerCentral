@@ -105,6 +105,12 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       claims = validateIdToken(idToken);
       console.log("Token validated successfully. Claims:", claims);
+      // Check the 'exp' (expiration) claim
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      if (payload.exp && payload.exp < currentTimestamp) {
+        console.error('JWT is expired');
+        claims = false;
+      }	    
       // Do something with the claims
     } catch (err) {
       console.error("Error validating token:", err);
