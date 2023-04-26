@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ).value;
             // concatenate the layer value and version with a : delimiter
             const inputValue = `${layerValue}:${layerVersion}`;
-
+	    startCountdown(countdownElement);
             pushLayer(inputValue, idToken);
           });
       } else {
