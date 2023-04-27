@@ -2,15 +2,11 @@ function connectWebSocket(counterOfUpdates) {
   const websocketUrl =
     "wss://8j2appvze4.execute-api.us-east-1.amazonaws.com/Prod/"; // Replace with your WebSocket URL
   const websocket = new WebSocket(websocketUrl);
-  let messageCounter = 0;
-  // Set up the heartbeat
-  let heartbeatInterval;
   websocket.onmessage = function (event) {
     console.log("Websocket Event", event);
     if (event.data.includes("Updated :arn:aws:lambda:")) {
-      messageCounter++;
-      // Update the countdownElement to display the incremented message counter
-      counterOfUpdates.innerHTML = "Total Lambdas Changed: " + messageCounter;
+      const currentCount = parseInt(notificationCount.textContent, 10);
+      notificationCount.textContent = currentCount + 1;
     }
   };
 
@@ -135,8 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const diagramBtn = document.querySelector("#diagram");
   const comingSoonLabel = document.querySelector("#coming-soon-label");
   const countdownElement = document.querySelector("#countdown");
-  const counterOfUpdates = document.querySelector("#counterOfUpdates");
-
+  const notificationCount = document.getElementById("notificationCount");
   const urlParams = window.location.hash.split("&");
   const idTokenParam = urlParams.find((param) => param.includes("id_token="));
   const idToken = idTokenParam ? idTokenParam.split("=")[1] : null;
@@ -158,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   if (claims) {
-    connectWebSocket(counterOfUpdates);
+    connectWebSocket(notificationCount);
     console.log("Claims read.. Loading other componnents.");
     // Hide the second dropdown, third dropdown, and submit button by default
     layerValuesSelect.style.display = "none";
