@@ -1,36 +1,25 @@
 function connectWebSocket(counterOfUpdates) {
-  const websocketUrl = "wss://8j2appvze4.execute-api.us-east-1.amazonaws.com/Prod/"; // Replace with your WebSocket URL
+  const websocketUrl =
+    "wss://8j2appvze4.execute-api.us-east-1.amazonaws.com/Prod/"; // Replace with your WebSocket URL
   const websocket = new WebSocket(websocketUrl);
-
   let messageCounter = 0;
-
   // Set up the heartbeat
   let heartbeatInterval;
-  const heartbeatFrequency = 30000; // 30 seconds
-
-  function sendHeartbeat() {
-    if (websocket.readyState === WebSocket.OPEN) {
-      websocket.send(JSON.stringify({ type: 'heartbeat' }));
-    }
-  }
-
   websocket.onmessage = function (event) {
-    messageCounter++;
-    // Update the countdownElement to display the incremented message counter
-    counterOfUpdates.innerHTML =
-      "Total Lambdas Changed: " + messageCounter;
+    console.log("Websocket Event", event);
+    if (event.data.includes("Updated :arn:aws:lambda:")) {
+      messageCounter++;
+      // Update the countdownElement to display the incremented message counter
+      counterOfUpdates.innerHTML = "Total Lambdas Changed: " + messageCounter;
+    }
   };
 
   websocket.onopen = function (event) {
     console.log("WebSocket connection opened:", event);
-    // Start the heartbeat interval
-    heartbeatInterval = setInterval(sendHeartbeat, heartbeatFrequency);
   };
 
   websocket.onclose = function (event) {
     console.log("WebSocket connection closed:", event);
-    // Clear the heartbeat interval
-    clearInterval(heartbeatInterval);
   };
 
   websocket.onerror = function (event) {
@@ -38,23 +27,22 @@ function connectWebSocket(counterOfUpdates) {
   };
 }
 
-
-function startCountdown(countdownElement,buttonId) {
+function startCountdown(countdownElement, buttonId) {
   let secondsRemaining = 30;
 
-  countdownElement.innerHTML = "Wait "+ secondsRemaining + "s";
+  countdownElement.innerHTML = "Wait " + secondsRemaining + "s";
   countdownElement.style.display = "block";
 
-  toggleButtons(buttonId,true);
+  toggleButtons(buttonId, true);
 
   let countdownInterval = setInterval(function () {
     secondsRemaining--;
-    countdownElement.innerHTML = "Wait "+ secondsRemaining + "s";
+    countdownElement.innerHTML = "Wait " + secondsRemaining + "s";
 
     if (secondsRemaining <= 0) {
       clearInterval(countdownInterval);
       countdownElement.style.display = "none";
-      toggleButtons(buttonId,false)
+      toggleButtons(buttonId, false);
     }
   }, 1000);
 }
@@ -160,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Check the 'exp' (expiration) claim
       const currentTimestamp = Math.floor(Date.now() / 1000);
       if (payload.exp && payload.exp < currentTimestamp) {
-        console.error('JWT is expired');
+        console.error("JWT is expired");
         claims = false;
       }
       // Do something with the claims
@@ -170,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   if (claims) {
-
     connectWebSocket(counterOfUpdates);
     console.log("Claims read.. Loading other componnents.");
     // Hide the second dropdown, third dropdown, and submit button by default
@@ -182,22 +169,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     refereshBtn.addEventListener("click", function (event) {
       refreshData(idToken);
-      startCountdown(countdownElement,refereshBtn);
+      startCountdown(countdownElement, refereshBtn);
     });
-	var currentLink = "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
-	diagramBtn.addEventListener("click", function (event) {
-		console.log("Diagram button clicked...")
-		
-		var iframe = document.querySelector("#dashboard-section-frame");
-		console.log(currentLink)
-		if (currentLink === "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws") {
-			currentLink = "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/";
-		  } else {
-			currentLink = "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
-		  }
-		  console.log(currentLink)
-		  iframe.src = currentLink;
-	  });
+    var currentLink =
+      "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
+    diagramBtn.addEventListener("click", function (event) {
+      console.log("Diagram button clicked...");
+
+      var iframe = document.querySelector("#dashboard-section-frame");
+      console.log(currentLink);
+      if (
+        currentLink ===
+        "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws"
+      ) {
+        currentLink =
+          "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/";
+      } else {
+        currentLink =
+          "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
+      }
+      console.log(currentLink);
+      iframe.src = currentLink;
+    });
 
     // Add an event listener to the first dropdown
     const configTypeSelect = document.querySelector("#config-type");
@@ -247,7 +240,6 @@ document.addEventListener("DOMContentLoaded", function () {
           layerVersionSelect.appendChild(option);
         });
 
-        
         // add a submit event listener to the form that calls the pushLayer function
         document
           .querySelector("form")
@@ -264,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // concatenate the layer value and version with a : delimiter
             const inputValue = `${layerValue}:${layerVersion}`;
             pushLayer(inputValue, idToken);
-            startCountdown(countdownElement,submitBtn);
+            startCountdown(countdownElement, submitBtn);
           });
       } else {
         // Otherwise, hide the second dropdown, third dropdown, submit button, and "coming soon" label
