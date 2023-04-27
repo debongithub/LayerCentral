@@ -1,8 +1,51 @@
-function startCountdown(countdownElement) {
+function connectWebSocket(counterOfUpdates) {
+  const websocketUrl = "wss://8j2appvze4.execute-api.us-east-1.amazonaws.com/Prod/"; // Replace with your WebSocket URL
+  const websocket = new WebSocket(websocketUrl);
+
+  let messageCounter = 0;
+
+  // Set up the heartbeat
+  let heartbeatInterval;
+  const heartbeatFrequency = 30000; // 30 seconds
+
+  function sendHeartbeat() {
+    if (websocket.readyState === WebSocket.OPEN) {
+      websocket.send(JSON.stringify({ type: 'heartbeat' }));
+    }
+  }
+
+  websocket.onmessage = function (event) {
+    messageCounter++;
+    // Update the countdownElement to display the incremented message counter
+    counterOfUpdates.innerHTML =
+      "Total Lambdas Changed: " + messageCounter;
+  };
+
+  websocket.onopen = function (event) {
+    console.log("WebSocket connection opened:", event);
+    // Start the heartbeat interval
+    heartbeatInterval = setInterval(sendHeartbeat, heartbeatFrequency);
+  };
+
+  websocket.onclose = function (event) {
+    console.log("WebSocket connection closed:", event);
+    // Clear the heartbeat interval
+    clearInterval(heartbeatInterval);
+  };
+
+  websocket.onerror = function (event) {
+    console.error("WebSocket error:", event);
+  };
+}
+
+
+function startCountdown(countdownElement,buttonId) {
   let secondsRemaining = 30;
 
   countdownElement.innerHTML = "Wait "+ secondsRemaining + "s";
   countdownElement.style.display = "block";
+
+  toggleButtons(buttonId,true);
 
   let countdownInterval = setInterval(function () {
     secondsRemaining--;
@@ -11,12 +54,21 @@ function startCountdown(countdownElement) {
     if (secondsRemaining <= 0) {
       clearInterval(countdownInterval);
       countdownElement.style.display = "none";
-      location.reload();
+      toggleButtons(buttonId,false)
     }
   }, 1000);
 }
 
-
+// Modify the toggleButtons function to accept a button element as an argument
+function toggleButtons(button, disabled) {
+  if (disabled) {
+    button.setAttribute("disabled", true);
+    button.style.opacity = 0.5;
+  } else {
+    button.removeAttribute("disabled");
+    button.style.opacity = 1;
+  }
+}
 
 // define a function to handle the layer push request
 function pushLayer(inputValue, idToken) {
@@ -95,6 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const diagramBtn = document.querySelector("#diagram");
   const comingSoonLabel = document.querySelector("#coming-soon-label");
   const countdownElement = document.querySelector("#countdown");
+  const counterOfUpdates = document.querySelector("#counterOfUpdates");
 
   const urlParams = window.location.hash.split("&");
   const idTokenParam = urlParams.find((param) => param.includes("id_token="));
@@ -104,13 +157,12 @@ document.addEventListener("DOMContentLoaded", function () {
   if (idToken) {
     try {
       claims = validateIdToken(idToken);
-      console.log("Token validated successfully. Claims:", claims);
       // Check the 'exp' (expiration) claim
       const currentTimestamp = Math.floor(Date.now() / 1000);
       if (payload.exp && payload.exp < currentTimestamp) {
         console.error('JWT is expired');
         claims = false;
-      }	    
+      }
       // Do something with the claims
     } catch (err) {
       console.error("Error validating token:", err);
@@ -118,6 +170,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   if (claims) {
+
+    connectWebSocket(counterOfUpdates);
     console.log("Claims read.. Loading other componnents.");
     // Hide the second dropdown, third dropdown, and submit button by default
     layerValuesSelect.style.display = "none";
@@ -128,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     refereshBtn.addEventListener("click", function (event) {
       refreshData(idToken);
-      startCountdown(countdownElement);
+      startCountdown(countdownElement,refereshBtn);
     });
 	var currentLink = "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
 	diagramBtn.addEventListener("click", function (event) {
@@ -193,13 +247,13 @@ document.addEventListener("DOMContentLoaded", function () {
           layerVersionSelect.appendChild(option);
         });
 
+        
         // add a submit event listener to the form that calls the pushLayer function
         document
           .querySelector("form")
           .addEventListener("submit", function (event) {
             // prevent the default behavior of the form
             event.preventDefault();
-
             // get the selected values from the dropdowns
             const layerValue = document.getElementById(
               "layer-values-dropdown"
@@ -209,8 +263,8 @@ document.addEventListener("DOMContentLoaded", function () {
             ).value;
             // concatenate the layer value and version with a : delimiter
             const inputValue = `${layerValue}:${layerVersion}`;
-	    startCountdown(countdownElement);
             pushLayer(inputValue, idToken);
+            startCountdown(countdownElement,submitBtn);
           });
       } else {
         // Otherwise, hide the second dropdown, third dropdown, submit button, and "coming soon" label
