@@ -177,12 +177,55 @@ iframe {
   text-align: center;
 }
 
-.counterOfUpdates {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  text-align: center;
+.notification-container {
+  display: flex;
+  align-items: center;
 }
 
+.notification {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
 
+.notification:hover .fas.fa-bell {
+  animation: bell-shake 0.5s ease infinite;
+}
+
+@keyframes bell-shake {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.notification .fas.fa-bell {
+  font-size: 24px;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.notification:hover .fas.fa-bell {
+  color: #333;
+}
+
+.notification .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  padding: 4px 8px;
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+  font-size: 10px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.notification-label {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: 500;
+}
