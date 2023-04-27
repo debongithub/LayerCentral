@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws"
       ) {
         currentLink =
-          "https://diyi9s5833.execute-api.us-east-1.amazonaws.com/ab3/";
+          "https://main.d1i31c60bboqhk.amplifyapp.com/layer_push.jpeg";
       } else {
         currentLink =
           "https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws";
