@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <title>AWS Serverless Fleet Control</title>
     <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
       rel="stylesheet"
     />
@@ -61,7 +66,9 @@
             </select>
           </div>
           <div class="btn-block">
-            <button type="submit" id="submit">One Click Push : Latest Layer</button>
+            <button type="submit" id="submit">
+              One Click Push : Latest Layer
+            </button>
           </div>
           <div id="coming-soon-label" class="coming-soon" style="display: none">
             Feature Coming Soon
@@ -77,15 +84,18 @@
           <br />
           <hr />
           <div id="countdown" class="countdown"></div>
-          <br />
-          <hr />
-          <div id="counterOfUpdates" class="counterOfUpdates"></div>
-        </div>
+          <div class="notification-container">
+            <div class="notification">
+              <i class="fas fa-bell"></i>
+              <span class="badge" id="notificationCount">0</span>
+            </div>
+            <span class="notification-label">Incoming Lambda Updates</span>
+          </div>
         <!-- Add this line where you want the countdown to be displayed -->
-
       </section>
       <section id="dashboard-section">
-        <iframe id="dashboard-section-frame"
+        <iframe
+          id="dashboard-section-frame"
           src="https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/218067593328/dashboards/4777d3a3-7bf9-4907-90c6-5bf64275500a?directory_alias=debasis-rath-aws"
         >
         </iframe>
