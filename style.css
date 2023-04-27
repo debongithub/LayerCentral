@@ -177,4 +177,12 @@ iframe {
   text-align: center;
 }
 
+.counterOfUpdates {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 
