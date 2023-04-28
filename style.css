@@ -198,7 +198,7 @@ iframe {
 }
 
 .notification .fas.fa-bell {
-  font-size: 24px;
+  font-size: 40px;
   color: #555;
   transition: color 0.3s ease;
 }
@@ -215,7 +215,7 @@ iframe {
   border-radius: 50%;
   background-color: red;
   color: white;
-  font-size: 10px;
+  font-size: 20px;
   animation: pulse 2s infinite;
 }
 
